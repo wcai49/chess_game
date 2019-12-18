@@ -4,11 +4,19 @@ using UnityEngine;
 
 public class BoardManager : MonoBehaviour
 {
+    public static BoardManager Instance { set; get; }
+    private bool[,] allowedMoves { set; get; }
+
+    public Chessman[,] Chessmans { set; get; }
+    private Chessman selectedChessman;
+
     private const float TILE_SIZE = 1.0F;
     private const float TILE_OFFSET = 0.5F;
 
     private int selectionX = -1;
     private int selectionY = -1;
+
+    public bool isWhiteTurn = true;
 
     public List<GameObject> chessmanPrefabs;
     private List<GameObject> activeChessman = new List<GameObject>();
@@ -16,12 +24,82 @@ public class BoardManager : MonoBehaviour
 
     private void Start()
     {
+        Instance = this;
         SpawnAllChessman();
     }
     private void Update()
     {
         UpdateSelection();
         DrawChessBoard();
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            if(selectionX >=0 && selectionY >=0)
+            {
+                if(selectedChessman == null)
+                {
+                    //select a chessman please
+                    SelectChessman(selectionX, selectionY);
+                }
+                else
+                {
+                    //Move the chessman
+                    MoveChessman(selectionX, selectionY);
+                }
+            }
+        }
+    }
+
+    private void SelectChessman(int x, int y)
+    {
+        //if there is no chessman on that position, return
+        if(Chessmans [x,y] == null)
+        {
+            return;
+        }
+        //if it is not your turn, return.
+        if(Chessmans[x,y].isWhite != isWhiteTurn)
+        {
+            return;
+        }
+
+        allowedMoves = Chessmans[x, y].PossibleMove();
+        selectedChessman = Chessmans[x, y];
+        BoardHighlights.Instance.HighlighAllowedMoves(allowedMoves);
+
+    }
+
+    private void MoveChessman(int x, int y)
+    {
+        if(allowedMoves[x,y])
+        {
+            Chessman c = Chessmans[x, y];
+            if (c != null && c.isWhite != isWhiteTurn)
+            {
+                //Capture a piece
+
+                //if it is the king
+                if(c.GetType() == typeof(King))
+                {
+                    //End the game
+                    return;
+                }
+
+                activeChessman.Remove(c.gameObject);
+                Destroy(c.gameObject);
+            }
+
+
+            Chessmans[selectedChessman.CurrentX, selectedChessman.CurrentY] = null;
+            selectedChessman.transform.position = GetCenter(x, y);
+            selectedChessman.SetPosition(x, y);
+            Chessmans[x, y] = selectedChessman;
+            isWhiteTurn = !isWhiteTurn;
+        }
+
+        //unselect
+        selectedChessman = null;
+        BoardHighlights.Instance.Hidehighlights();
     }
 
     //function to draw a chessboard for now.
@@ -71,10 +149,12 @@ public class BoardManager : MonoBehaviour
         }
     }
 
-    private void SpawnChessman(int index, Vector3 position)
+    private void SpawnChessman(int index, int x, int y)
     {
-        GameObject go = Instantiate(chessmanPrefabs[index], position, Quaternion.identity) as GameObject;
+        GameObject go = Instantiate(chessmanPrefabs[index], GetCenter(x,y), Quaternion.identity) as GameObject;
         go.transform.SetParent(transform);
+        Chessmans [x, y] = go.GetComponent<Chessman>();
+        Chessmans [x, y].SetPosition(x, y);
         activeChessman.Add(go);
     }
 
@@ -90,38 +170,39 @@ public class BoardManager : MonoBehaviour
     private void SpawnAllChessman()
     {
         activeChessman = new List<GameObject>();
+        Chessmans = new Chessman[8, 8];
         //spwan the white team and the black team
 
         //King
-        SpawnChessman(0, GetCenter(3, 0));
-        SpawnChessman(6, GetCenter(4, 7));
+        SpawnChessman(0, 3, 0);
+        SpawnChessman(6, 4, 7);
         //Queen
-        SpawnChessman(1, GetCenter(4, 0));
-        SpawnChessman(7, GetCenter(3, 7));
+        SpawnChessman(1, 4, 0);
+        SpawnChessman(7, 3, 7);
 
         //Rooks
-        SpawnChessman(2, GetCenter(0, 0));
-        SpawnChessman(2, GetCenter(7, 0));
-        SpawnChessman(8, GetCenter(0, 7));
-        SpawnChessman(8, GetCenter(7, 7));
+        SpawnChessman(2, 0, 0);
+        SpawnChessman(2, 7, 0);
+        SpawnChessman(8, 0, 7);
+        SpawnChessman(8, 7, 7);
 
         //Bishops
-        SpawnChessman(3, GetCenter(2, 0));
-        SpawnChessman(3, GetCenter(5, 0));
-        SpawnChessman(9, GetCenter(2, 7));
-        SpawnChessman(9, GetCenter(5, 7));
+        SpawnChessman(3, 2, 0);
+        SpawnChessman(3, 5, 0);
+        SpawnChessman(9, 2, 7);
+        SpawnChessman(9, 5, 7);
 
         //Kights
-        SpawnChessman(4, GetCenter(1, 0));
-        SpawnChessman(4, GetCenter(6, 0));
-        SpawnChessman(10, GetCenter(1, 7));
-        SpawnChessman(10, GetCenter(6, 7));
+        SpawnChessman(4, 1, 0);
+        SpawnChessman(4, 6, 0);
+        SpawnChessman(10,1, 7);
+        SpawnChessman(10,6, 7);
 
         //Pawns
         for (int i = 0; i < 8; i++)
         {
-            SpawnChessman(5, GetCenter(i, 1));
-            SpawnChessman(11, GetCenter(i, 6));
+            SpawnChessman(5, i, 1);
+            SpawnChessman(11, i, 6);
         }
     }
 }

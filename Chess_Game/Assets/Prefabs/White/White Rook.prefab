@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6682419710634717653}
   - component: {fileID: 538067199982789987}
   - component: {fileID: 4146735608440424749}
+  - component: {fileID: 3569444611198384408}
   - component: {fileID: 9009474150321561534}
   m_Layer: 0
   m_Name: White Rook
@@ -78,6 +79,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &3569444611198384408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2089638463070236438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 146d0ca4f6c69b84ea9b941511a9f97f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isWhite: 1
 --- !u!64 &9009474150321561534
 MeshCollider:
   m_ObjectHideFlags: 0

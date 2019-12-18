@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 932780059169304641}
   - component: {fileID: 4535406072798547352}
   - component: {fileID: 3028815863191303746}
+  - component: {fileID: 2883630123858948227}
   - component: {fileID: 6242625548495697885}
   m_Layer: 0
   m_Name: Black Queen
@@ -78,6 +79,19 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &2883630123858948227
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6795396757473674433}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 528fdd7edb8848f43b580b91603378b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isWhite: 0
 --- !u!64 &6242625548495697885
 MeshCollider:
   m_ObjectHideFlags: 0
