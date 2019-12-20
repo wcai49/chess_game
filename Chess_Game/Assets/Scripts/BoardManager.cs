@@ -21,6 +21,9 @@ public class BoardManager : MonoBehaviour
     public List<GameObject> chessmanPrefabs;
     private List<GameObject> activeChessman = new List<GameObject>();
 
+    private Material previousMat;
+    public Material selectedMat;
+
 
     private void Start()
     {
@@ -63,8 +66,20 @@ public class BoardManager : MonoBehaviour
             return;
         }
 
+        bool leastOneMove = false;
         allowedMoves = Chessmans[x, y].PossibleMove();
+
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++)
+                if (allowedMoves[i, j])
+                    leastOneMove = true;
+
+        if (!leastOneMove)
+            return;
         selectedChessman = Chessmans[x, y];
+        previousMat = selectedChessman.GetComponent < MeshRenderer > ().material;
+        selectedMat.mainTexture = previousMat.mainTexture;
+        selectedChessman.GetComponent<MeshRenderer>().material = selectedMat;
         BoardHighlights.Instance.HighlighAllowedMoves(allowedMoves);
 
     }
@@ -78,10 +93,11 @@ public class BoardManager : MonoBehaviour
             {
                 //Capture a piece
 
-                //if it is the king
+                //if it is the     king
                 if(c.GetType() == typeof(King))
                 {
                     //End the game
+                    EndGame();
                     return;
                 }
 
@@ -96,7 +112,7 @@ public class BoardManager : MonoBehaviour
             Chessmans[x, y] = selectedChessman;
             isWhiteTurn = !isWhiteTurn;
         }
-
+        selectedChessman.GetComponent<MeshRenderer>().material = previousMat;
         //unselect
         selectedChessman = null;
         BoardHighlights.Instance.Hidehighlights();
@@ -204,5 +220,19 @@ public class BoardManager : MonoBehaviour
             SpawnChessman(5, i, 1);
             SpawnChessman(11, i, 6);
         }
+    }
+
+    private void EndGame()
+    {
+        if (isWhiteTurn)
+            Debug.Log("White team wins");
+        else
+            Debug.Log("Blakc team wins");
+        foreach (GameObject go in activeChessman)
+            Destroy(go);
+
+        isWhiteTurn = true;
+        BoardHighlights.Instance.Hidehighlights();
+        SpawnAllChessman();
     }
 }
