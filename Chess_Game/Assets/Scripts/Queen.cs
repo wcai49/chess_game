@@ -171,8 +171,8 @@ public class Queen : Chessman
         j = CurrentY;
         while (true)
         {
-            i++;
-            j--;
+            i--;
+            j++;
             if (i >= 8 || j < 0)
                 break;
 

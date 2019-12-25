@@ -17,9 +17,12 @@ public class BoardManager : MonoBehaviour
     private int selectionY = -1;
 
     public bool isWhiteTurn = true;
+    public bool isFinished = false;
 
     public List<GameObject> chessmanPrefabs;
     private List<GameObject> activeChessman = new List<GameObject>();
+    public GameObject winCanvas;
+    public GameObject loseCanvas;
 
     private Material previousMat;
     public Material selectedMat;
@@ -55,6 +58,8 @@ public class BoardManager : MonoBehaviour
 
     private void SelectChessman(int x, int y)
     {
+        if (isFinished)
+            return;
         //if there is no chessman on that position, return
         if(Chessmans [x,y] == null)
         {
@@ -98,6 +103,7 @@ public class BoardManager : MonoBehaviour
                 {
                     //End the game
                     EndGame();
+                    isFinished = true;
                     return;
                 }
 
@@ -225,14 +231,30 @@ public class BoardManager : MonoBehaviour
     private void EndGame()
     {
         if (isWhiteTurn)
+        {
             Debug.Log("White team wins");
+            winCanvas.SetActive(true);
+        }
+
         else
+        {
             Debug.Log("Blakc team wins");
+            loseCanvas.SetActive(true);
+        }
+
+        
+    }
+
+    public void RestartGame()
+    {
         foreach (GameObject go in activeChessman)
             Destroy(go);
 
         isWhiteTurn = true;
         BoardHighlights.Instance.Hidehighlights();
+        winCanvas.SetActive(false);
+        loseCanvas.SetActive(false);
+        isFinished = false;
         SpawnAllChessman();
     }
 }

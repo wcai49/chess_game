@@ -6,7 +6,7 @@ public class Bishop : Chessman
 {
     public override bool[,] PossibleMove()
     {
-        bool[,] r = new bool[8, 8];
+        bool[,] r = new bool[9, 9];
 
         Chessman c;
         int i, j;
