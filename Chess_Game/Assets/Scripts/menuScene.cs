@@ -8,6 +8,7 @@ public class menuScene : MonoBehaviour
 {
    public void playStart()
     {
+        Debug.Log("123");
         SceneManager.LoadScene("GameScene");
     }
 }
